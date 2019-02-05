@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <list>
+#include "../BinarySearchTree/BinarySearchTree.h"
 
 
 
@@ -35,11 +36,14 @@ std::map<std::string,int>::iterator findNextOldest(int olderbrother, std::map<st
 
 int main(int argc, char* argv[]){
 
+
+
     std::map<std::string,int> mymap;
     std::map<std::string,int>::iterator mit;
 
-    std::list<std::map<std::string>::iterator,int> ordered;
-    std::list<std::map<std::string>::iterator,int>::iterator> ordered_i;
+
+    BST::Tree<std::map<std::string,int>::iterator> tree;
+
 
     mymap["justin"]=1983;
     mymap["ryan"]=1987;
@@ -49,30 +53,23 @@ int main(int argc, char* argv[]){
     mymap["gabe"]=2001;
 
 
-    // now print out everbodys birthday
-    for(mit=mymap.begin();mit!=mymap.end();mit++){
-	std::cout << mit->first << " birtday is " << mit->second << std::endl;
-    }
-
     // notice that they are not in order
     // how would I print them out in order them?
     // 1) create an ordered list
     // 2) print out the ordered list
-    int oldest = 100000;
-    // create an ordered list of iterators
-    while( ordered.size() < mymap.size() ){
-	std::map<std::string,int>::iterator nextkid = findNextOldest(oldest,mymap);
-	oldest = nextkid->second;
-	ordered.push_back(nextkid);
-    }
 
-    // now print them out in order
-    for(ordered_i=ordered.begin();ordered_i!=ordered.end();++ordered_i){
-	//	std::cout << ordered_i->second->first << " birtday is " << ordered_t->second->second << std::endl;
-    }
+    // To do this we will use a BinarySearchTree and insert all the values
+    // Then we will traverse the tree and it will come out in order 
 
     
-    
+    // now print out everbodys birthday
+    for(mit=mymap.begin();mit!=mymap.end();mit++){
+	std::cout << mit->first << " birtday is " << mit->second << std::endl;
+	tree.insert(mit); // put them in our tree
+    }
+
+
+
 
     return 0;
 }
