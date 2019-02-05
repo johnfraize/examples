@@ -1,7 +1,12 @@
 namespace BST{
 
+    enum{
+	Inorder,  // left,root, right
+	Preorder, // root,left,right
+	Postorder // left,right,root
+    }TraversalType;
+
     template <class T>
-	
     class Node{
     public:
 	Node* left;
@@ -23,11 +28,9 @@ namespace BST{
 	    }
 	}
 
-
 	
-	void walk(){
+	Node<T>* walk(Node<T>* base, TraversalType tt){
 	    
 	}
     };
-
 }
