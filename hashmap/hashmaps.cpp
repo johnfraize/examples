@@ -19,13 +19,13 @@ std::map<std::string,int>::iterator findNextOldest(int olderbrother, std::map<st
 
     for(i=m.begin();i!=m.end();++i){
 
-	if( i->second < olderbrother ){
-	    dmap[olderbrother - i->second] = i; // save the delta
-	    if( nextoldest < i->second ){
-		nextoldest = i->second;
-		iret = i;
-	    }
-	}
+        if( i->second < olderbrother ){
+            dmap[olderbrother - i->second] = i; // save the delta
+            if( nextoldest < i->second ){
+                nextoldest = i->second;
+                iret = i;
+            }
+        }
 	//	std::cout << mit->first << " birtday is " << mit->second << std::endl;
     }
 
@@ -36,11 +36,8 @@ std::map<std::string,int>::iterator findNextOldest(int olderbrother, std::map<st
 
 int main(int argc, char* argv[]){
 
-
-
     std::map<std::string,int> mymap;
     std::map<std::string,int>::iterator mit;
-
 
     BST::Tree<std::map<std::string,int>::iterator> tree;
 
@@ -64,8 +61,8 @@ int main(int argc, char* argv[]){
     
     // now print out everbodys birthday
     for(mit=mymap.begin();mit!=mymap.end();mit++){
-	std::cout << mit->first << " birtday is " << mit->second << std::endl;
-	tree.insert(mit); // put them in our tree
+        std::cout << mit->first << " birtday is " << mit->second << std::endl;
+        tree.insert(mit); // put them in our tree
     }
 
 
