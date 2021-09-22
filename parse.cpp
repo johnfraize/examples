@@ -12,22 +12,22 @@ int main(int argc, char* argv[]){
 
 
   try {
-    std::stack<std::string> stk;
-    std::string tmp;
+      std::stack<std::string> stk;
+      std::string tmp;
 
-    for( char c : input){
-      std::cout << c ;
-      if( c == '(' ){
-	stk.push(tmp);
+      for( char c : input){
+          std::cout << c ;
+          if( c == '(' ){
+              stk.push(tmp);
+          }
+          else if( c == ')') {
+              stk.pop();
+              tmp = stk.top();
+          }
+          else{
+              tmp += c;
+          }
       }
-      else if( c == ')') {
-	stk.pop();
-	tmp = stk.top();
-      }
-      else{
-	tmp += c;
-      }
-    }
   }
   catch (...) {
 
