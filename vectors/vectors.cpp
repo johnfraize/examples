@@ -10,7 +10,7 @@ bool mycompareInts(int a, int b){
 int main() {
 
     // some ints 
-    std::vector<int> myvec {10,58,33,1,2,3};
+  std::vector<int> myvec {10,58,33,1,2,3,77,3,3,3,5};
 
     // sort the whole thing default from smallest to biggest
     std::sort(myvec.begin(),myvec.end());
