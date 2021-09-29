@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <list>
@@ -33,6 +34,9 @@ std::map<std::string,int>::iterator findNextOldest(int olderbrother, std::map<st
     return iret;
 }
 
+bool mySortaThing(std::string a, std::string b){
+  return false;
+}
 
 int main(int argc, char* argv[]){
 
@@ -48,7 +52,9 @@ int main(int argc, char* argv[]){
     mymap["isaac"]=1997;
     mymap["josh"]=1999;
     mymap["gabe"]=2001;
+    
 
+    std::sort(mymap.begin(),mymap.end(),mySortaThing);
 
     // notice that they are not in order
     // how would I print them out in order them?

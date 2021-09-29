@@ -11,13 +11,7 @@ DudeType fastback(const DudeType m){
 
 int main(int argc, char* argv[]){
 
-
-  
-    
-
   fastback(3.9);
-   
-  
 
   std::cout << "this is the day" << std::endl;
 
