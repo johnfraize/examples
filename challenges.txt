@@ -1,0 +1,47 @@
+Fermenent 1D
+!Sezz16Paris!
+
+
+Factorial Challenge
+
+Here's a challenge that's a bit more mathematical in nature. Write a program that determines the number of trailing zeros at the end of X! (X factorial), where X is an arbitrary number. For instance, 5! is 120, so it has one trailing zero. (How can you handle extremely values, such as 100!?) The input format should be that the program asks the user to enter a number, minus the !.
+
+
+Integer to english number conversion
+Write a program that takes an integer and displays the English name of that value.
+
+You should support both positive and negative numbers, in the range supported by a 32-bit integer (approximately -2 billion to 2 billion).
+
+Examples:
+
+10 -> ten
+121 -> one hundred twenty one
+1032 -> one thousand thirty two
+11043 -> eleven thousand forty three
+1200000 -> one million two hundred thousand
+
+String Searching Challenge - without regex
+
+Write a program that takes two arguments at the command line, both strings.
+The program checks to see whether or not the second string is a substring of the first
+ (without using the substr -- or any other library -- function).
+One caveat: any * in the second string can match zero or more characters in the first string,
+so if the input were abcd and the substring were a*c, then it would count as a substring.
+Also, include functionality to allow an asterisk to be taken literally
+if preceded by a \, and a \ is taken literally except when preceding an asterisk.
+
+
+Array Sum Challenge
+In this challenge, given an array of integers, the goal is to efficiently find the subarray that has the greatest value when all of its elements are summed together. Note that because some elements of the array may be negative, the problem is not solved by simply picking the start and end elements of the array to be the subarrray, and summing the entire array.
+
+For example, given the array
+
+  {1, 2, -5, 4, -3, 2}
+  
+The maximum sum of a subarray is 4. It is possible for the subarray to be zero elements in length (if every element of the array were negative).
+
+Before you write the code, take some time to think of the most efficient solution possible; it may surprise you. The major goal of this challenge is to test your algorithmic skills rather than merely your ability to write code quickly.
+
+Self-Printing Program
+Write a program that, when run, will print out its source code. This source code, in turn, should compile and print out itself. (Fun fact: a program that prints itself is called a quine.)
+
