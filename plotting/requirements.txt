@@ -2,7 +2,6 @@ pyserial
 argparse
 termcolor
 paramiko
-urlopen
 black
 numpy
 matplotlib
