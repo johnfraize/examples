@@ -1,5 +1,3 @@
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7,17 +5,17 @@ import matplotlib.pyplot as plt
 np.random.seed(19680801)
 
 dt = 0.01
-t = np.arange(0, 30, dt)
+t = np.arange(0, 10, dt)
+print("len is {}".format(len(t)))
 nse1 = np.random.randn(len(t))                 # white noise 1
 nse2 = np.random.randn(len(t))                 # white noise 2
 
 # Two signals with a coherent part at 10 Hz and a random part
-s1 = np.sin(2 * np.pi * 10 * t) + nse1
+s1 = np.sin(2 * np.pi * 10 * t) + 5
 s2 = np.sin(2 * np.pi * 10 * t) + nse2
 s3 = np.sin(2 * np.pi * 10 * t) + nse2
 s4 = np.sin(2 * np.pi * 10 * t) + nse2
 s5 = np.sin(2 * np.pi * 10 * t) + nse2
-
 
 # returns a array of axes
 fig, axs = plt.subplots(3, 1)
