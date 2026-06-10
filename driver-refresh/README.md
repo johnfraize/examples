@@ -1,7 +1,7 @@
-# Linux driver refresher — HPR prep
+# Linux driver refresher — VENDER prep
 
 A starter character driver to get your fingers back in kernel space, then a
-ramp toward the topics that actually map to HPR (line-rate networking, FPGA,
+ramp toward the topics that actually map to VENDER (line-rate networking, FPGA,
 nanosecond latency) — and to your own résumé story.
 
 ## Quick start (on your Linux box)
@@ -20,7 +20,7 @@ sudo rmmod cdev_demo
 - `unlocked_ioctl` with a proper `_IO/_IOR/_IOW` contract
 - **Zero-copy `mmap`** of a `vmalloc_user` buffer — *this is the one to dwell on.*
 
-## The progression (rebuild the muscle in order of HPR relevance)
+## The progression (rebuild the muscle in order of VENDER relevance)
 
 1. **mmap / zero-copy (DONE in starter).** Talk track: this is exactly the
    FPGA-BAR / packet-ring idiom — userspace touches device memory with no copy
@@ -29,7 +29,7 @@ sudo rmmod cdev_demo
 2. **Interrupts + top/bottom half.** Add a `request_threaded_irq` (or simulate
    with a kernel timer / hrtimer firing into a workqueue or tasklet). Practice
    articulating *why* you keep the hard-IRQ handler tiny and defer work — the
-   latency-determinism story HPR lives in.
+   latency-determinism story VENDER lives in.
 
 3. **DMA.** `dma_alloc_coherent` for a coherent ring buffer; understand
    streaming DMA (`dma_map_single`) + the sync calls, cache coherence, and why
