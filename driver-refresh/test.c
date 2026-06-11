@@ -12,6 +12,10 @@
 #define DEMO_IOC_RESET   _IO(DEMO_IOC_MAGIC, 0)
 #define DEMO_IOC_GET_LEN _IOR(DEMO_IOC_MAGIC, 1, int)
 #define DEMO_IOC_SET_LEN _IOW(DEMO_IOC_MAGIC, 2, int)
+#define DEMO_IOC_IRQ_START _IO(DEMO_IOC_MAGIC, 3)
+#define DEMO_IOC_IRQ_STOP  _IO(DEMO_IOC_MAGIC, 4)
+#define DEMO_IOC_GET_IRQS  _IOR(DEMO_IOC_MAGIC, 5, int)
+#define DEMO_IOC_WAIT_IRQ  _IO(DEMO_IOC_MAGIC, 6)
 
 int main(void)
 {
@@ -42,6 +46,17 @@ int main(void)
     printf("read after mmap write: %s", buf);
 
     munmap(map, 4096);
+
+    // simulated interrupt path: arm the IRQ source, block until two fire, read
+    // the count, then disarm. WAIT_IRQ exercises the IRQ -> waitqueue wakeup.
+    ioctl(fd, DEMO_IOC_IRQ_START, 0);
+    for (int i = 0; i < 2; i++)
+        ioctl(fd, DEMO_IOC_WAIT_IRQ, 0);   // blocks in the kernel until the next IRQ
+    int irqs = 0;
+    ioctl(fd, DEMO_IOC_GET_IRQS, &irqs);
+    printf("simulated IRQs handled: %d\n", irqs);
+    ioctl(fd, DEMO_IOC_IRQ_STOP, 0);
+
     close(fd);
     return 0;
 }
