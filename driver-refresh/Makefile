@@ -1,5 +1,6 @@
 # Kbuild out-of-tree module + userspace test.
 obj-m += cdev_demo.o
+obj-m += pcie_demo.o
 
 KDIR ?= /lib/modules/$(shell uname -r)/build
 

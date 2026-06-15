@@ -1,9 +1,10 @@
 // cdev_demo.c — a refresher character driver.
 // Exercises the muscles you'll want fresh for HPR: cdev/class registration,
 // file_operations, copy_to/from_user, unlocked_ioctl, zero-copy mmap of a
-// kernel buffer into userspace (the FPGA-BAR / packet-ring idiom), and a
+// kernel buffer into userspace (the FPGA-BAR / packet-ring idiom), a
 // simulated interrupt with a top/bottom-half split (hrtimer -> workqueue) plus
-// a waitqueue so userspace can block on events.
+// a waitqueue so userspace can block on events, and an RCU-protected config
+// pointer swap (the read-mostly "swap in a new BAR/ring config" idiom).
 //
 //   make            # build against running kernel
 //   sudo insmod cdev_demo.ko
@@ -28,6 +29,8 @@
 #include <linux/wait.h>
 #include <linux/sched.h>
 #include <linux/atomic.h>
+#include <linux/rcupdate.h>
+#include <linux/spinlock.h>
 
 #define DEV_NAME   "cdev_demo"
 #define BUF_SIZE   PAGE_SIZE
@@ -41,6 +44,8 @@
 #define DEMO_IOC_IRQ_STOP   _IO(DEMO_IOC_MAGIC, 4)        // disarm it
 #define DEMO_IOC_GET_IRQS   _IOR(DEMO_IOC_MAGIC, 5, int)  // top-half (IRQ) count
 #define DEMO_IOC_WAIT_IRQ   _IO(DEMO_IOC_MAGIC, 6)        // block until the next IRQ
+#define DEMO_IOC_SET_THRESH _IOW(DEMO_IOC_MAGIC, 7, int)  // RCU-swap a new config in
+#define DEMO_IOC_GET_THRESH _IOR(DEMO_IOC_MAGIC, 8, int)  // RCU-read the current config
 
 #define DEMO_IRQ_INTERVAL_MS 100   // simulated IRQ period
 
@@ -94,6 +99,54 @@ static void demo_irq_stop(void)
     irq_armed = false;
     hrtimer_cancel(&demo_timer);   // waits for the callback; never call under a lock it takes
     cancel_work_sync(&demo_work);  // flush any pending bottom half
+}
+
+// --- RCU-protected config: read-mostly pointer swapped on the slow path ---
+// The canonical kernel idiom for "swap in a new immutable config object" (e.g. a
+// new BAR layout / ring sizing). Readers take no lock; the writer allocates a
+// fresh object, publishes it, waits out in-flight readers, then frees the old.
+struct demo_config {
+    u32 ring_size;
+    u32 threshold;
+};
+static struct demo_config __rcu *cfg;       // the shared pointer (__rcu for sparse)
+static DEFINE_SPINLOCK(cfg_lock);           // serializes writers; readers never take it
+
+// Reader (hot path). Anything cfg points to is only valid inside the read-side
+// section — don't stash the pointer past rcu_read_unlock().
+static u32 demo_get_threshold(void)
+{
+    struct demo_config *c;
+    u32 val;
+
+    rcu_read_lock();
+    c = rcu_dereference(cfg);   // load + consume barrier paired with assign below
+    val = c->threshold;
+    rcu_read_unlock();
+    return val;
+}
+
+// Writer (slow path): allocate-new -> publish -> wait out readers -> free-old.
+// synchronize_rcu() can sleep, so this must run in process context (it does —
+// it's called from unlocked_ioctl), never from IRQ/atomic context.
+static int demo_set_threshold(u32 new_threshold)
+{
+    struct demo_config *new_cfg, *old_cfg;
+
+    new_cfg = kmalloc(sizeof(*new_cfg), GFP_KERNEL);
+    if (!new_cfg)
+        return -ENOMEM;
+
+    spin_lock(&cfg_lock);
+    old_cfg = rcu_dereference_protected(cfg, lockdep_is_held(&cfg_lock));
+    *new_cfg = *old_cfg;                  // fully init the new object before publishing
+    new_cfg->threshold = new_threshold;
+    rcu_assign_pointer(cfg, new_cfg);     // publish: release barrier + store
+    spin_unlock(&cfg_lock);
+
+    synchronize_rcu();                    // wait for all pre-existing readers to finish
+    kfree(old_cfg);                       // now provably unreferenced — safe to free
+    return 0;
 }
 
 static ssize_t demo_read(struct file *f, char __user *ubuf, size_t len, loff_t *off)
@@ -152,6 +205,14 @@ static long demo_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
             return -ERESTARTSYS;
         return 0;
     }
+    case DEMO_IOC_SET_THRESH:
+        if (get_user(v, (int __user *)arg))
+            return -EFAULT;
+        if (v < 0)
+            return -EINVAL;
+        return demo_set_threshold(v);   // RCU writer: swaps in a new config
+    case DEMO_IOC_GET_THRESH:
+        return put_user(demo_get_threshold(), (int __user *)arg);  // RCU reader
     default:
         return -ENOTTY;
     }
@@ -178,6 +239,7 @@ static const struct file_operations demo_fops = {
 
 static int __init demo_init(void)
 {
+    struct demo_config *init_cfg;
     int ret;
 
     // hrtimer_init()+assigning .function was replaced by hrtimer_setup() in 6.15.
@@ -195,8 +257,15 @@ static int __init demo_init(void)
     mmap_buf = vmalloc_user(BUF_SIZE);   // zeroed, page-aligned, mmap-safe
     if (!mmap_buf) { ret = -ENOMEM; goto err_kbuf; }
 
+    // Seed the RCU config. No readers can exist yet, so RCU_INIT_POINTER (no
+    // release barrier) is correct here — rcu_assign_pointer would also work.
+    init_cfg = kzalloc(sizeof(*init_cfg), GFP_KERNEL);
+    if (!init_cfg) { ret = -ENOMEM; goto err_vmalloc; }
+    init_cfg->ring_size = BUF_SIZE;
+    RCU_INIT_POINTER(cfg, init_cfg);
+
     ret = alloc_chrdev_region(&dev_num, 0, 1, DEV_NAME);
-    if (ret) goto err_vmalloc;
+    if (ret) goto err_cfg;
 
     cdev_init(&demo_cdev, &demo_fops);
     demo_cdev.owner = THIS_MODULE;
@@ -217,6 +286,7 @@ static int __init demo_init(void)
 
 err_cdev:   cdev_del(&demo_cdev);
 err_region: unregister_chrdev_region(dev_num, 1);
+err_cfg:    kfree(init_cfg);
 err_vmalloc:vfree(mmap_buf);
 err_kbuf:   kfree(kbuf);
     return ret;
@@ -229,6 +299,9 @@ static void __exit demo_exit(void)
     class_destroy(demo_class);
     cdev_del(&demo_cdev);
     unregister_chrdev_region(dev_num, 1);
+    // Module refcounting (.owner) means no fds — hence no readers — remain here,
+    // so the config is unreferenced and a plain kfree is safe.
+    kfree(rcu_dereference_protected(cfg, 1));
     vfree(mmap_buf);
     kfree(kbuf);
     pr_info("%s: unloaded\n", DEV_NAME);

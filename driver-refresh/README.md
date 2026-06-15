@@ -38,8 +38,11 @@ sudo rmmod cdev_demo
 4. **Locking / concurrency.** spinlock vs mutex vs RCU, per-CPU data, and
    lock-free hot paths — your "pin the flow to one core" design in driver terms.
 
-5. **PCI or platform probe.** A `pci_driver`/`platform_driver` with `.probe`,
-   BAR mapping (`pci_iomap`), MSI/MSI-X — the shape of a real NIC/FPGA driver.
+5. **PCI or platform probe (skeleton DONE — `pcie_demo.c`).** A `pci_driver`
+   with `.probe`: enable → `pci_set_master` → `pci_request_regions` → BAR map
+   (`pci_iomap`) → `dma_set_mask_and_coherent` → `dma_alloc_coherent` ring →
+   `pci_alloc_irq_vectors` (MSI/MSI-X) → `request_threaded_irq`. Registers but
+   does not `.probe()` here (no matching card) — the idiom is the deliverable.
 
 ## Refresher gotchas worth re-internalizing
 - No floating point / no large stack in kernel; `GFP_KERNEL` may sleep,
