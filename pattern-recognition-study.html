@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recognizing the 14 Patterns — HPR Study Guide</title>
+<style>
+  @page { size: letter; margin: 0.6in; }
+  * { box-sizing: border-box; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #1a1a1a;
+         font-size: 13px; line-height: 1.5; margin: 0; max-width: 760px; }
+  h1 { font-family: -apple-system, Arial, sans-serif; font-size: 22px; margin: 0 0 4px; }
+  h2 { font-family: -apple-system, Arial, sans-serif; font-size: 15px; color: #2c5f8a;
+       border-bottom: 2px solid #2c5f8a; padding-bottom: 3px; margin: 22px 0 10px; }
+  h3 { font-family: -apple-system, Arial, sans-serif; font-size: 13.5px; margin: 14px 0 2px; }
+  .lead { color: #555; font-style: italic; margin: 0 0 10px; }
+  .reflex { background: #fff8e6; border: 1px solid #e8c96a; border-radius: 8px;
+            padding: 10px 14px; margin: 12px 0; font-family: -apple-system, Arial, sans-serif;
+            font-size: 12px; }
+  .pat { border-left: 3px solid #2c5f8a; padding: 2px 0 2px 12px; margin: 12px 0; }
+  .pat .num { font-family: -apple-system, Arial, sans-serif; font-weight: 700; color: #2c5f8a; }
+  .cue { font-family: -apple-system, Arial, sans-serif; font-size: 11.5px; }
+  .label { font-family: -apple-system, Arial, sans-serif; font-weight: 700; font-size: 10.5px;
+           text-transform: uppercase; letter-spacing: 0.4px; color: #2c5f8a; }
+  code { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px;
+         background: #eef1f4; padding: 0 3px; border-radius: 3px; }
+  .trap { background: #fdecea; border: 1px solid #e3a9a3; border-radius: 8px;
+          padding: 8px 14px; margin: 10px 0; }
+  .trap .vs { font-family: -apple-system, Arial, sans-serif; font-weight: 700; color: #b3261e; }
+  ol.quiz { font-family: -apple-system, Arial, sans-serif; font-size: 12px; }
+  ol.quiz li { margin: 5px 0; }
+  .answers { color: #444; font-size: 11.5px; }
+  .pgbreak { page-break-before: always; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<h1>Recognizing the 14 Patterns</h1>
+<p class="lead">HPR interview study guide. The goal isn't to <em>solve</em> — it's to look at a problem and instantly say "that's a ___." Read this like flashcards.</p>
+
+<div class="reflex">
+<strong>The whole skill in one shift:</strong> stop asking <em>"how would I solve this?"</em> (that's inventing brute force). Ask <em>"which of my 14 shapes is this?"</em> (that's recognizing). The reflex:
+<br>① <strong>bound on n</strong> &rarr; allowed complexity (kills brute force) &nbsp;② <strong>cue words</strong> &rarr; 2–3 candidates &nbsp;③ <strong>a constraint</strong> kills the impossible ones (e.g. negatives kill sliding window).
+</div>
+
+<h2>The 14 patterns — cue · what it does · the tell</h2>
+
+<div class="pat"><span class="num">1. Two-pointer.</span>
+<span class="label">Cue:</span> sorted (or sortable) array, "find a pair/triple", "is there an x+y = t".
+<br><span class="label">Does:</span> one index from each end, walk them toward each other.
+<br><span class="label">Tell:</span> sorted + looking for a relationship between two elements. <em>Ex: Two Sum on a sorted array → lo/hi pointers, sum too small move lo up.</em></div>
+
+<div class="pat"><span class="num">2. Sliding window.</span>
+<span class="label">Cue:</span> "longest/shortest <strong>contiguous</strong> subarray/substring with a property", values <strong>non-negative</strong>.
+<br><span class="label">Does:</span> grow a window from the right, shrink from the left, keep a running quantity.
+<br><span class="label">Tell:</span> contiguous + the running quantity is <em>monotonic</em> (grows when you add, shrinks when you remove). <em>Ex: longest substring with all-distinct chars; shortest subarray with sum ≥ S (positive ints).</em></div>
+
+<div class="pat"><span class="num">3. Prefix sum + hashmap.</span>
+<span class="label">Cue:</span> "contiguous subarray summing to <strong>exactly k</strong>", especially when values can be <strong>negative</strong>.
+<br><span class="label">Does:</span> running prefix sum <code>S</code>; count earlier prefixes equal to <code>S − k</code> via a hashmap.
+<br><span class="label">Tell:</span> "sum = k" + negatives present (negatives <em>break</em> the window, so you fall back to this). <em>Seed the map with {0:1}.</em></div>
+
+<div class="pat"><span class="num">4. Hashmap / frequency array.</span>
+<span class="label">Cue:</span> "count occurrences", "seen before", "distinct", "anagram", "duplicate".
+<br><span class="label">Does:</span> map value → count (or last-seen index). O(1) lookup.
+<br><span class="label">Tell:</span> you need to remember what you've seen. <em>Bounded values (e.g. lowercase letters) → use a plain <code>int[26]</code>, not a hashmap.</em></div>
+
+<div class="pat"><span class="num">5. Sorting + sweep.</span>
+<span class="label">Cue:</span> "intervals/meetings overlap or merge", "schedule", anything about order on a number line.
+<br><span class="label">Does:</span> sort by start, then walk once keeping a "current" interval.
+<br><span class="label">Tell:</span> the word "interval" almost always = sort first. <em>Ex: merge overlapping intervals.</em></div>
+
+<div class="pat"><span class="num">6. Binary search (on a sorted array).</span>
+<span class="label">Cue:</span> already sorted + "find / insert position of a value".
+<br><span class="label">Does:</span> halve the search range each step.
+<br><span class="label">Tell:</span> sorted data + you're locating a specific value. O(log n). <em>Use <code>mid = lo + (hi-lo)/2</code>.</em></div>
+
+<div class="pat"><span class="num">7. Binary search on the answer.</span>
+<span class="label">Cue:</span> "min/max value such that a property holds", "is it possible within budget K?", and the property is <strong>monotonic</strong> (once true, stays true).
+<br><span class="label">Does:</span> binary-search the <em>answer space</em>, test feasibility at each midpoint.
+<br><span class="label">Tell:</span> huge answer range + a yes/no feasibility check. <em>Ex: minimum capacity to ship in D days.</em></div>
+
+<div class="pat"><span class="num">8. Heap (priority queue).</span>
+<span class="label">Cue:</span> "k-th largest/smallest", "top k", "running median", "merge k lists".
+<br><span class="label">Does:</span> keep only the k elements that matter, O(log k) per op.
+<br><span class="label">Tell:</span> you want the best few, not a full sort. <em>Sorting also works (O(n log n)) but heap (O(n log k)) / quickselect (O(n)) is the faster gear — say so.</em></div>
+
+<div class="pat"><span class="num">9. Monotonic stack.</span>
+<span class="label">Cue:</span> "next greater/smaller element", "span", "largest rectangle in histogram".
+<br><span class="label">Does:</span> a stack kept in increasing/decreasing order; pop while the new element breaks the order.
+<br><span class="label">Tell:</span> "next/previous greater or smaller" is the dead giveaway.</div>
+
+<div class="pat"><span class="num">10. Stack.</span>
+<span class="label">Cue:</span> "balanced", "valid parentheses", nesting, undo, "evaluate expression".
+<br><span class="label">Does:</span> push openers, pop/match on closers; must be empty at the end.
+<br><span class="label">Tell:</span> matching/nesting that must close in reverse order. <em>In C: <code>char st[n]; int top=0;</code></em></div>
+
+<div class="pat"><span class="num">11. BFS (breadth-first search).</span>
+<span class="label">Cue:</span> "minimum steps/moves to reach", unweighted shortest path, "levels", grid distances.
+<br><span class="label">Does:</span> explore level by level with a queue; first arrival = fewest steps.
+<br><span class="label">Tell:</span> graph/grid + <em>shortest</em>. <em>Queue.</em></div>
+
+<div class="pat"><span class="num">12. DFS / union-find.</span>
+<span class="label">Cue:</span> "connected components", "flood fill", "number of islands", "all paths", cycle detection.
+<br><span class="label">Does:</span> go deep then backtrack (recursion/stack); union-find for grouping.
+<br><span class="label">Tell:</span> graph/grid + <em>reach/group everything</em> (not shortest).</div>
+
+<div class="pat"><span class="num">13. Dynamic programming.</span>
+<span class="label">Cue:</span> "number of ways", "min/max cost/length", "can you make X", overlapping subproblems, small-ish n with combinatorial feel.
+<br><span class="label">Does:</span> define a state + a transition; fill a table.
+<br><span class="label">Tell:</span> the answer depends on answers to smaller versions of the same problem. <em>Ex: coin change, edit distance, longest increasing subsequence.</em></div>
+
+<div class="pat"><span class="num">14. Math / bit trick.</span>
+<span class="label">Cue:</span> huge n with arithmetic, divisibility/parity, "without extra space", "single number".
+<br><span class="label">Does:</span> closed-form formula, GCD, XOR tricks, sieve.
+<br><span class="label">Tell:</span> n is astronomically large (1e9–1e18) so only O(log n)/O(1) survives → must be math.</div>
+
+<h2 class="pgbreak">The trap pairs (where you got bitten today)</h2>
+<p class="lead">Two problems that <em>look</em> the same; a single constraint decides. This is the real test.</p>
+
+<div class="trap"><span class="vs">#2 Sliding window &nbsp;vs&nbsp; #3 Prefix-sum+hashmap</span>
+<br>Both scream "contiguous subarray." The decider: <strong>are negatives allowed?</strong> Non-negative → window (monotonic). Negatives present → window is <em>dead</em> (adding can lower the sum) → prefix-sum + hashmap.</div>
+
+<div class="trap"><span class="vs">#1 Two-pointer &nbsp;vs&nbsp; #11/12 BFS/DFS</span>
+<br>"Find a pair" on a flat <strong>array</strong> = two-pointer. BFS/DFS only when there's a <strong>graph or grid</strong> (nodes, edges, neighbors). No graph → no BFS.</div>
+
+<div class="trap"><span class="vs">#6 Binary search &nbsp;vs&nbsp; #7 Binary search on answer</span>
+<br>Searching for a value <em>in sorted data</em> = #6. Searching for the smallest/largest <em>parameter that makes something feasible</em> = #7 (the array may be unsorted; you bisect the answer range, not the array).</div>
+
+<div class="trap"><span class="vs">#8 Heap &nbsp;vs&nbsp; full sort</span>
+<br>"k-th largest" — sorting works and is a fine first answer (O(n log n)). But you only need the top k, so heap (O(n log k)) or quickselect (O(n)) is faster. When they ask "can you do better?", that's the answer.</div>
+
+<div class="trap"><span class="vs">#5 Sort+sweep &nbsp;vs&nbsp; #4 Hashmap</span>
+<br>Intervals/overlap = order on a number line → <strong>sort</strong>. A hashmap has no order, so it can't help with overlap. If your complexity instinct says "n log n", that's the sort talking — follow it.</div>
+
+<h2>Recognition self-quiz (do it in the dark)</h2>
+<p class="lead">Read the cue, name the pattern + number before peeking. Answers at the bottom.</p>
+<ol class="quiz">
+<li>"Longest substring with at most 2 distinct characters." (n ≤ 1e5)</li>
+<li>"Count subarrays summing to k; array has negatives." (n ≤ 1e5)</li>
+<li>"Minimum number of moves for a knight to reach a square." (grid)</li>
+<li>"Largest rectangle in a histogram."</li>
+<li>"k-th smallest element in an unsorted array." (n ≤ 1e5)</li>
+<li>"Given sorted array, find if two values sum to t."</li>
+<li>"Number of islands in a grid of land/water."</li>
+<li>"Smallest ship capacity to deliver all packages within D days."</li>
+<li>"Are these parentheses/brackets valid?"</li>
+<li>"How many distinct values appear?" (values up to 1e9)</li>
+<li>"Merge all overlapping meeting times."</li>
+<li>"Coins of given denominations — fewest to make amount N."</li>
+<li>"Find the one number that appears once; all others appear twice."</li>
+<li>"For each element, the next element greater than it."</li>
+<li>"Shortest contiguous subarray with sum ≥ S; all positive." (n ≤ 1e5)</li>
+</ol>
+<p class="answers"><strong>Answers:</strong>
+1) #2 sliding window ·
+2) #3 prefix-sum+hashmap (negatives!) ·
+3) #11 BFS ·
+4) #9 monotonic stack ·
+5) #8 heap/quickselect (sort = OK first answer) ·
+6) #1 two-pointer ·
+7) #12 DFS/union-find ·
+8) #7 binary search on the answer ·
+9) #10 stack ·
+10) #4 hashmap (values huge → not an array) ·
+11) #5 sort + sweep ·
+12) #13 DP ·
+13) #14 bit trick (XOR all) ·
+14) #9 monotonic stack ·
+15) #2 sliding window (positive → monotonic).</p>
+
+<hr>
+<p class="answers" style="text-align:center;">If a cue doesn't instantly fire the pattern, that's the one to drill tomorrow. Recognition over recall — let it wash over you. Sleep when it's boring.</p>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Pattern Zoo — HackerRank C Recognition Sheet</title>
+<style>
+  @page { size: letter; margin: 0.5in; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #1a1a1a; font-size: 10.5px; line-height: 1.35; margin: 0;
+  }
+  h1 { font-size: 19px; margin: 0 0 2px; }
+  h2 { font-size: 12.5px; margin: 12px 0 5px; padding-bottom: 2px;
+       border-bottom: 2px solid #2c5f8a; color: #2c5f8a; }
+  .sub { color: #555; font-size: 10px; margin: 0 0 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+  th, td { text-align: left; padding: 3px 6px; vertical-align: top;
+           border-bottom: 1px solid #ddd; }
+  th { background: #2c5f8a; color: #fff; font-size: 9.5px; text-transform: uppercase;
+       letter-spacing: 0.3px; }
+  tr:nth-child(even) td { background: #f4f7fa; }
+  .num { width: 18px; color: #2c5f8a; font-weight: 700; text-align: center; }
+  .pat { width: 165px; font-weight: 600; }
+  code { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 9.5px;
+         background: #eef1f4; padding: 0 3px; border-radius: 3px; }
+  .reflex { background: #fff8e6; border: 1px solid #e8c96a; border-radius: 6px;
+            padding: 7px 10px; margin: 8px 0; }
+  .reflex ol { margin: 4px 0 0; padding-left: 18px; }
+  .reflex li { margin: 2px 0; }
+  .cols { display: flex; gap: 14px; }
+  .cols > div { flex: 1; }
+  .trap { color: #b3261e; font-weight: 600; }
+  footer { margin-top: 10px; color: #888; font-size: 8.5px; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>The Pattern Zoo</h1>
+<p class="sub">HackerRank C interview — recognition checklist. ~14 patterns cover the vast majority of screens. Recognition first; speed comes from use.</p>
+
+<div class="reflex">
+  <strong>The 3-step reflex (under the clock):</strong>
+  <ol>
+    <li><strong>Read the bound on <code>n</code></strong> &rarr; that fixes the <em>allowed complexity</em> before you read the problem twice.</li>
+    <li><strong>Scan the cue column</strong> &rarr; 2&ndash;3 patterns light up.</li>
+    <li><strong>The constraints kill the impossible ones</strong> &rarr; usually one survives.</li>
+  </ol>
+</div>
+
+<h2>Pattern &rarr; Dead-giveaway cue</h2>
+<table>
+  <tr><th class="num">#</th><th class="pat">Pattern</th><th>Dead-giveaway cue</th></tr>
+  <tr><td class="num">1</td><td class="pat">Two-pointer</td><td>sorted (or sortable) array, &ldquo;find a pair/triple&rdquo;, converge from both ends</td></tr>
+  <tr><td class="num">2</td><td class="pat">Sliding window</td><td>&ldquo;longest/shortest <strong>contiguous</strong> subarray/substring with property&rdquo;, <strong>no negatives</strong></td></tr>
+  <tr><td class="num">3</td><td class="pat">Prefix sum + hashmap</td><td>&ldquo;contiguous sum = k&rdquo;, especially <strong>with negatives</strong> <span class="trap">(window is dead)</span></td></tr>
+  <tr><td class="num">4</td><td class="pat">Hashmap / freq array</td><td>&ldquo;count occurrences&rdquo;, &ldquo;seen before&rdquo;, &ldquo;distinct&rdquo;, &ldquo;anagram&rdquo;</td></tr>
+  <tr><td class="num">5</td><td class="pat">Sorting + sweep</td><td>&ldquo;intervals/meetings overlap or merge&rdquo;, &ldquo;schedule&rdquo;</td></tr>
+  <tr><td class="num">6</td><td class="pat">Binary search (array)</td><td>sorted + &ldquo;find/insert position of value&rdquo;</td></tr>
+  <tr><td class="num">7</td><td class="pat">Binary search on answer</td><td>&ldquo;min/max value such that property holds&rdquo;, &ldquo;possible within budget K?&rdquo; + monotonic</td></tr>
+  <tr><td class="num">8</td><td class="pat">Heap (priority queue)</td><td>&ldquo;kth largest/smallest&rdquo;, &ldquo;top k&rdquo;, &ldquo;running median&rdquo;</td></tr>
+  <tr><td class="num">9</td><td class="pat">Monotonic stack</td><td>&ldquo;next greater/smaller element&rdquo;, spans, histogram</td></tr>
+  <tr><td class="num">10</td><td class="pat">Stack</td><td>&ldquo;balanced&rdquo;, &ldquo;valid parentheses&rdquo;, nesting, undo</td></tr>
+  <tr><td class="num">11</td><td class="pat">BFS</td><td>&ldquo;minimum steps to reach&rdquo;, unweighted shortest path, levels</td></tr>
+  <tr><td class="num">12</td><td class="pat">DFS / union-find</td><td>&ldquo;connected components&rdquo;, flood fill, &ldquo;all paths&rdquo;</td></tr>
+  <tr><td class="num">13</td><td class="pat">Dynamic programming</td><td>&ldquo;number of ways&rdquo;, &ldquo;min/max cost&rdquo;, overlapping subproblems</td></tr>
+  <tr><td class="num">14</td><td class="pat">Math / bit trick</td><td>huge <code>n</code>, divisibility/parity, &ldquo;without extra space&rdquo;</td></tr>
+</table>
+
+<div class="cols">
+<div>
+<h2>Constraint &rarr; complexity</h2>
+<p class="sub" style="margin:-2px 0 4px;">Budget ~1e8 ops/sec. Work backwards from <code>n</code>.</p>
+<table>
+  <tr><th>n bound</th><th>Allowed time</th><th>Likely approach</th></tr>
+  <tr><td><code>&le;12</code></td><td>O(n!) / O(2&#8319;&middot;n)</td><td>brute force, backtracking</td></tr>
+  <tr><td><code>&le;25</code></td><td>O(2&#8319;)</td><td>subsets, bitmask DP, meet-in-middle</td></tr>
+  <tr><td><code>&le;500</code></td><td>O(n&sup3;)</td><td>Floyd-Warshall, interval DP</td></tr>
+  <tr><td><code>&le;5e3</code></td><td>O(n&sup2;)</td><td>2 nested loops, basic DP table</td></tr>
+  <tr><td><code>&le;1e6</code></td><td>O(n log n)/O(n)</td><td>sort, two-pointer, window, hashing, heap</td></tr>
+  <tr><td><code>&le;1e8</code></td><td>O(n)</td><td>single pass, prefix sums, counting</td></tr>
+  <tr><td><code>&le;1e18</code></td><td>O(log n)/O(1)</td><td>binary search, math/closed form</td></tr>
+</table>
+</div>
+<div>
+<h2>When stuck — 3 questions</h2>
+<table>
+  <tr><th>Ask</th><th>If yes &rarr;</th></tr>
+  <tr><td>Can I <strong>sort</strong> it?</td><td>two-pointer, sweep, binary search</td></tr>
+  <tr><td>Can a <strong>hashmap</strong> make lookup O(1)?</td><td>freq count, &ldquo;seen before&rdquo;, prefix-sum</td></tr>
+  <tr><td>Can I keep a <strong>running</strong> quantity in one pass?</td><td>window, prefix sum, counting</td></tr>
+</table>
+<h2 style="margin-top:8px;">C gotchas (the &#10060; on submit)</h2>
+<ul style="margin:2px 0; padding-left:16px;">
+  <li><code>long long</code> for sums &gt; ~2e9; print <code>%lld</code>.</li>
+  <li><code>mid = lo + (hi-lo)/2</code> &mdash; never <code>(lo+hi)/2</code>.</li>
+  <li>Comparator <code>(a&gt;b)-(a&lt;b)</code>, not <code>a-b</code> (overflow).</li>
+  <li>Off-by-one on 1-indexed input.</li>
+  <li>Consume newline before <code>fgets</code> after <code>scanf("%d")</code>.</li>
+</ul>
+</div>
+</div>
+
+<footer>Pattern Zoo &middot; HPR interview prep &middot; recognition reflex: bound &rarr; complexity &rarr; cue &rarr; pattern</footer>
+
+</body>
+</html>
