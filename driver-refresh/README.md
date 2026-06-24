@@ -14,6 +14,19 @@ dmesg | tail            # confirm load + major
 sudo rmmod cdev_demo
 ```
 
+## Run `./test` without root (udev rule)
+By default `device_create()` makes `/dev/cdev_demo` `root:root 0600`, so `./test`
+needs sudo. Install the bundled rule to set the node `0666`:
+```sh
+sudo make install-udev   # cp 99-cdev_demo.rules -> /etc/udev/rules.d/, reload + re-trigger
+ls -l /dev/cdev_demo     # now crw-rw-rw-
+./test                   # runs as a normal user
+```
+udev only applies the rule when the node is *created*, so `install-udev`
+re-triggers udev for an already-loaded module; otherwise `rmmod` + `insmod`.
+Note: `sudo` needs a real TTY — run it in an interactive shell, not a non-TTY
+wrapper.
+
 ## What the starter already exercises
 - `cdev` + `class`/`device_create` registration (udev auto-creates `/dev/cdev_demo`)
 - `file_operations`: read/write with `copy_to/from_user`
