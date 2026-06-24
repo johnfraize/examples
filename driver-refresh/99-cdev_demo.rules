@@ -1,0 +1,13 @@
+# udev rule for the cdev_demo character driver.
+# The driver registers a class+device both named "cdev_demo" (DEV_NAME in
+# cdev_demo.c), so /dev/cdev_demo is created root:root 0600 by default and
+# ./test must run as root. This rule makes it world-rw so the userspace
+# exerciser runs without sudo.
+#
+# Install:
+#   sudo cp 99-cdev_demo.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload-rules
+#   sudo udevadm trigger --subsystem-match=cdev_demo   # or rmmod+insmod
+#
+# (matching on both KERNEL and SUBSYSTEM keeps it from touching anything else)
+KERNEL=="cdev_demo", SUBSYSTEM=="cdev_demo", MODE="0666"
