@@ -24,65 +24,96 @@
  * Run:    ./subarray_sum_k < test1.txt
  *
  * ------------------------------------------------------------------
- * The input parsing below is just boilerplate so you can focus on the
- * algorithm. Everything you actually need to think about goes where the
- * TODO is. (Delete/rewrite any of this if you'd rather build it all yourself.)
- * Hint on scope only, not on method: you'll need some way to look up
- * "how many earlier prefix sums equal X" in ~O(1). C gives you no such
- * container for free.
- * ------------------------------------------------------------------
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 
+unsigned long long** level1;
+unsigned long long* level2;
+#define HASH_ENTRIES_PER_LEVEL 1<<16
+
+void hash_setup(){
+		level1 = calloc(HASH_ENTRIES_PER_LEVEL,sizeof(long long*));
+}
+
+void hash_write(int index_wrd, long long data){
+
+		// look at index and and break into
+		unsigned short idx1 = (index_wrd >> 16) & 0xffff;
+		unsigned short idx2 = index_wrd  & 0xffff;
+
+
+		unsigned long long* level2 = level1[idx1];
+
+		if (level2 == 0){
+				level2 = calloc(HASH_ENTRIES_PER_LEVEL,sizeof(long long));
+				level1[idx1] = level2;
+
+		}
+
+		level2[idx2] = data;
+
+}
+
+long long hash_read(int index_wrd){
+
+		unsigned short idx1 = (index_wrd >> 16) & 0xffff;
+		unsigned short idx2 = index_wrd  & 0xffff;
+
+		unsigned long long* level2 = level1[idx1];
+
+		if (level2 == 0 ){
+				return 0;
+		}
+
+
+		return level2[idx2];
+
+}
+
+void hash_free(){
+		if(level1){
+				for(int i=0;i<HASH_ENTRIES_PER_LEVEL;i++){
+						unsigned long long* level2 = level1[i];
+						if (level2){
+								free(level2);
+						}
+				}
+				free(level1);
+		}
+}
+
+
 int main(void) {
     long long n, k;
-	int answer = 0;
+	long long count = 0;
     if (scanf("%lld %lld", &n, &k) != 2) return 0;
 
-
-	//printf("n %lld, k %lld\n",n,k);
-
-	// the input
-    long long *a = malloc(n * sizeof *a);
-
-	// to save time
-	long long *sums = malloc((n+1) * sizeof *a);
-	long long *seen = malloc((n+1) * sizeof *a);
-
-	// the record of counts indexed by sum
-	// this needs to be (n +1) * n
+	hash_setup();
 
 
-    if (!a) return 1;
+	hash_write(0,1);
 
-	long long sum = 0;
-	sums[0] = 0; // first prior sum zero
-	seen[0] = 0;
-    for (long long i = 0; i < n; i++){
-			scanf("%lld", &a[i]);
-			sum += a[i];
-			sums[i+1] = sum;
-			seen[i+i] = 0;
+
+	int total = 0;
+
+    for (long long i = 0; i < n; i++) {
+        int x;
+        scanf("%d", &x);
+		total += x;
+
+		count += hash_read(total - k);
+
+		long long tmp = hash_read(total);
+		tmp++;
+		hash_write(total,tmp);
 	}
 
 
+	printf("%lld\n",count);
 
+	hash_free();
 
-    /* ============================================================
-     * TODO: compute the count of contiguous subarrays summing to k.
-     *       Print the single integer answer to stdout.
-     * ============================================================ */
-
-	for(int j=0;j<=n;j++){
-			long long v = a[i];
-	}
-
-
-	printf("%d\n",answer);
-
-    free(a);
-	free(sums);
     return 0;
 }
