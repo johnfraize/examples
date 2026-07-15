@@ -1,0 +1,29 @@
+# Two capped containers on one box = the "isolate BT vs Zigbee" pattern
+# (fault isolation + per-function resource limits, no k8s).
+#
+# Build the image first, then bring them up:
+#     docker build -t simplestrings:pi .
+#     docker compose up
+#
+# NOTE: simplestrings is a one-shot stdin->stdout filter, so each container
+# runs once and exits. A real radio daemon would loop; the isolation/limit
+# wiring below is identical either way.
+services:
+  radio-a:                       # stand-in for the BT function
+    image: simplestrings:pi
+    mem_limit: 16m               # cgroup cap: one function can't starve others
+    cpus: 0.5
+    read_only: true              # read-only rootfs (mind flash wear)
+    stdin_open: true
+    tty: true
+    # On the gateway, hand the real radio in here:
+    # devices:
+    #   - "/dev/ttyUSB0:/dev/ttyUSB0"
+
+  radio-b:                       # stand-in for the Zigbee function
+    image: simplestrings:pi
+    mem_limit: 16m
+    cpus: 0.5
+    read_only: true
+    stdin_open: true
+    tty: true
