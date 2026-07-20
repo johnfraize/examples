@@ -32,12 +32,63 @@ void gold(int n){
     }
 }
 
+class MessageThing{
+    int num_things;
+    public:
+    MessageThing() {
+
+    }
+    std::queue<std::string> messagesReceived;
+    std::string receiveMessage(){
+        
+    }
+    void idleLoop() {
+        while (true) {
+            std::string message = receiveMessage();
+            if (!message.empty()) {
+                std::cout << "Received message: " << message << std::endl;
+            }
+
+          
+
+
+        }
+    }
+
+
+    void queueMessage(const std::string& message) { 
+          messagesReceived.push(message);
+    }
+};
+
+
+
+
+
+
 int main(int argc, char* argv[] ){
     std::thread first(silver);
     std::thread second(gold,3);
 
-    first.join();
-    second.join();
+    MessageThing tingOne;
+    MessageThing tingTwo;
+
+
+    tingOne.queueMessage("Hello from tingOne!");
+    tingTwo.queueMessage("Hello from tingTwo!");
+
+    tingOne.idleLoop();
+    tingTwo.idleLoop();
+
 
     return 0;
 }
+
+
+
+
+
+
+
+
+
