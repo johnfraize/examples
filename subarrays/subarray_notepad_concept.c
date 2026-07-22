@@ -42,6 +42,12 @@ int main(void) {
     int n, K;
     if (scanf("%d %d", &n, &K) != 2) return 0;
 
+	// check to make sure we have at least two values
+	if (n<2){
+			printf("NO\n");
+			return 1;
+	}
+
     /* ---- THE NOTEPAD ----------------------------------------------------
      * seen[v] == 1  means "I have already passed the value v".
      * Start blank (all zeros). calloc zeroes it for you.
