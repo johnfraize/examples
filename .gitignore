@@ -1,0 +1,33 @@
+# --- Kernel / Kbuild out-of-tree build artifacts (driver-refresh) ---
+*.ko
+*.mod
+*.mod.c
+*.o
+*.cmd
+*.symvers
+*.order
+Module.symvers
+modules.order
+.tmp_versions/
+.built-in.a
+*.dwo
+
+# --- Compiled userspace binaries ---
+*.out
+*.exe
+*.a
+*.so
+*.so.*
+/driver-refresh/test
+/simplestrings
+
+# --- Editor / backup cruft ---
+*~
+*.swp
+*.swo
+.#*
+\#*#
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
