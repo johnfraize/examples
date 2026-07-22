@@ -21,6 +21,12 @@ modules.order
 /driver-refresh/test
 /simplestrings
 
+# Extensionless build outputs named after their directory
+/trees/trees
+/threads/threads
+/substring/substring
+/substring/john
+
 # --- Editor / backup cruft ---
 *~
 *.swp
