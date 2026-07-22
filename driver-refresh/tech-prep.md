@@ -2,7 +2,7 @@
 
 **Role:** Senior SWE, VENDER — ultra-low-latency HFT.
 **Tech round expected:** C (not C++), embedded-flavored, likely a **Linux kernel
-module / device driver**. VENDER ships **FPGA PCIe cards** (REDACTED®/REDACTED™), so the
+module / device driver**. VENDER ships **FPGA PCIe cards**, so the
 probable center of gravity is **PCIe driver → DMA → mmap-to-userspace → low latency**.
 
 **Your edge:** custom-FPGA Linux driver, IXP2800 microcode, 10Gbit data-plane TCP

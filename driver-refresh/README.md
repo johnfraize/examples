@@ -57,6 +57,30 @@ wrapper.
    `pci_alloc_irq_vectors` (MSI/MSI-X) → `request_threaded_irq`. Registers but
    does not `.probe()` here (no matching card) — the idiom is the deliverable.
 
+6. **sysfs attribute.** `DEVICE_ATTR_RW` with show/store, read and written from
+   `/sys`. Small, but it's the config-plane counterpart to the ioctl contract and
+   it comes up constantly.
+
+7. **Device tree → `.probe()` (needs a Pi, not this box).** The one thing x86
+   can't teach: here platform devices come from ACPI/PCI, so there's no natural
+   DT binding to write. On a Pi you write a real overlay, `dtc -@` it to a
+   `.dtbo`, drop it in `/boot/firmware/overlays/`, add `dtoverlay=` to
+   `config.txt`, and watch `.probe()` fire. A `platform_driver` with an
+   `of_device_id` table (`.compatible = "jf,demo"`) + `MODULE_DEVICE_TABLE(of,…)`.
+   The moment worth having is the chain: DT node → `compatible` match → bus binds
+   → `.probe()` runs — and debugging why it *didn't*.
+
+8. **A deliberate bug.** Sleep in atomic context, or a double-free, and watch
+   **lockdep** and **KASAN** catch it. Reading a real oops trace is its own skill
+   and it doesn't transfer from reading about it.
+
+## Debug tooling to actually use
+```sh
+dmesg -w                                   # live kernel log
+sudo cat /sys/kernel/debug/tracing/trace   # ftrace
+echo 'module cdev_demo +p' | sudo tee /sys/kernel/debug/dynamic_debug/control
+```
+
 ## Refresher gotchas worth re-internalizing
 - No floating point / no large stack in kernel; `GFP_KERNEL` may sleep,
   `GFP_ATOMIC` in IRQ context.
@@ -64,3 +88,10 @@ wrapper.
 - Modern API drift: `class_create()` dropped its owner arg in 6.4 (guarded in
   the .c); ioctl is `unlocked_ioctl`; `pr_info`/`dev_info` over `printk`.
 - Build = Kbuild out-of-tree against `/lib/modules/$(uname -r)/build`.
+
+## Log the failures
+The driver is the easy part — what's actually worth having is the record of what
+broke and how long it took to find. `failure-log.md` has the predictable-failure
+table (vermagic, missing `MODULE_LICENSE`, probe never firing, hang on `rmmod`)
+and the entry format. `interesting-driver-quirks.md` collects the API-churn
+specifics.
