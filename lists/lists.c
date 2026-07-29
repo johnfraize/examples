@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/queue.h>
 
 
@@ -13,7 +14,6 @@ typedef struct PersonData_s{
 
 int main(int argc, char* argv[]) {
     int i;
-    const int n = 3;
 
     PersonData data[] = {
                          {"pop", 1947},
@@ -41,7 +41,10 @@ int main(int argc, char* argv[]) {
     // iterate the list 
     LIST_FOREACH(person, &head, listStuff) {
         printf("Read %s, %d\n", person->name, person->born);
-        if( person->name == "gabe" ){
+        // name is a char*, so == compares POINTERS, not the characters.
+        // It happened to be false here; with string literals it can even be
+        // true by accident when the compiler pools identical literals.
+        if( strcmp(person->name, "gabe") == 0 ){
             printf("it is gabe\n");
         }
     }
