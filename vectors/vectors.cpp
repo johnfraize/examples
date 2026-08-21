@@ -3,9 +3,28 @@
 #include <iostream>
 #include <climits>
 
+class Glossy {
+  public:
+  int d =3;
+  void dumpit(){
+    std::cout << d << std::endl;
+  }
+
+  Glossy(int dd){
+    d = dd;
+    //std::cout << d << std::endl;
+  }
+
+};
 
 bool mycompareInts(int a, int b){
+  std::cout << "comparing " << a << " and " << b << std::endl;
   return(a > b);
+}
+
+bool mycompareGlossy(const Glossy& a, const Glossy& b){
+  std::cout << "comparing " << a.d << " and " << b.d << std::endl;
+  return(a.d > b.d);
 }
 
 
@@ -60,13 +79,7 @@ int multiDimFun(std::vector<std::vector<int>> & input){
   return max;
 }
 
-struct Glossy {
-  int d =3;
-  void dumpit(){
-    std::cout << d << std::endl;
-  }
 
-};
 
 int swapFun(std::vector<int> dude){
 
@@ -114,35 +127,66 @@ int main() {
 
   //dump2D(john);
   //dump2D(fraize);
-  return swapFun(oneDay);
+  //return swapFun(oneDay);
 
 
   
 
   // some ints 
-  std::vector<int> myvec {10,58,33,1,2,3,77,3,3,3,5};
+  std::vector<Glossy> myvec {10,58,33,1,2,3,77,3,3,3,5};
 
   // sort the whole thing default from smallest to biggest
-  std::sort(myvec.begin(),myvec.end());
+  std::sort(myvec.begin(),myvec.end(),mycompareGlossy);
 
-  std::cout << "smallest to biggest ";
+  std::cout << "smallest to biggest " << std::endl;
     
-  for( int j : myvec ){
-    std::cout << j << " ";
+  for( const auto& j : myvec ){
+    std::cout << j.d << " ";
   }    
 
   std::cout << std::endl;
     
   // sort using my own comparitor from biggest to smallest
-  std::sort(myvec.begin(),myvec.end(),mycompareInts);
+  //std::sort(myvec.begin(),myvec.end(),mycompareGlossy);
 
-  std::cout << "from biggest to smallest ";
+  std::cout << "from biggest to smallest " << std::endl;
 
-  for( int j : myvec ){
-    std::cout << j << " ";
+
+
+  myvec.assign({ 10,58,33,1,2,3,77,3,3,3,5});
+
+  myvec.erase(std::remove_if(myvec.begin(),myvec.end(),[](const Glossy& g){ return g.d < 10; }),myvec.end());
+
+
+  // to insert a new element into the vector, you can use the push_back() method. For example:
+  myvec.push_back(99);
+
+  // to remove an element from the vector, you can use the erase() method. For example, to remove the first element:
+  myvec.erase(myvec.begin());
+
+  // to remove all elements from the vector, you can use the clear() method. For example:
+  myvec.clear();
+
+  // to remove the first half of the vector, you can use the erase() method with a range. For example:
+  myvec.erase(myvec.begin(), myvec.begin() + myvec.size() / 2);
+
+
+  // to declare a huge vector of Glossy objects, you can use the following syntax:
+  std::vector<Glossy> hugeVector(1000000, Glossy(0)); // creates a vector of 1 million Glossy objects initialized with 0
+
+  // to declare on the heap, you can use the new operator to create a pointer to the vector. For example:
+  std::vector<Glossy>* hugeVectorPtr = new std::vector<Glossy>(1000000, Glossy(0)); // creates a vector of 1 million Glossy objects initialized with 0 on the heap
+
+
+
+  for( const auto& j : myvec ){
+    std::cout << j.d << " ";
   }
 
   std::cout << std::endl;
-    
+
+  delete hugeVectorPtr; // don't forget to delete the pointer to avoid memory leaks
+ 
+ 
   return 0;
 }

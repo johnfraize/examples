@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Recognizing the 15 Patterns — HPR Study Guide</title>
+<title>Recognizing the 18 Patterns — Study Guide</title>
 <style>
   @page { size: letter; margin: 0.6in; }
   * { box-sizing: border-box; }
@@ -17,16 +17,36 @@
   .reflex { background: #fff8e6; border: 1px solid #e8c96a; border-radius: 8px;
             padding: 10px 14px; margin: 12px 0; font-family: -apple-system, Arial, sans-serif;
             font-size: 12px; }
+  .leak { background: #eef4fa; border: 1px solid #9dbcd6; border-radius: 8px;
+          padding: 10px 14px; margin: 12px 0; font-family: -apple-system, Arial, sans-serif;
+          font-size: 12px; }
+  .leak .hd { font-weight: 700; color: #2c5f8a; text-transform: uppercase;
+              letter-spacing: 0.4px; font-size: 10.5px; }
   .pat { border-left: 3px solid #2c5f8a; padding: 2px 0 2px 12px; margin: 12px 0; }
   .pat .num { font-family: -apple-system, Arial, sans-serif; font-weight: 700; color: #2c5f8a; }
+  .pat.new { border-left-color: #1e7a46; }
+  .pat.new .num { color: #1e7a46; }
   .cue { font-family: -apple-system, Arial, sans-serif; font-size: 11.5px; }
   .label { font-family: -apple-system, Arial, sans-serif; font-weight: 700; font-size: 10.5px;
            text-transform: uppercase; letter-spacing: 0.4px; color: #2c5f8a; }
+  .pat.new .label { color: #1e7a46; }
+  .cost { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px;
+          background: #fff8e6; border: 1px solid #e8c96a; color: #6a4a00;
+          display: inline-block; padding: 1px 7px; border-radius: 4px; margin-top: 4px; }
   code { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px;
          background: #eef1f4; padding: 0 3px; border-radius: 3px; }
+  pre { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 11px;
+        background: #f6f8fa; border: 1px solid #dde3e9; border-radius: 6px;
+        padding: 8px 10px; overflow-x: auto; line-height: 1.45; }
   .trap { background: #fdecea; border: 1px solid #e3a9a3; border-radius: 8px;
           padding: 8px 14px; margin: 10px 0; }
   .trap .vs { font-family: -apple-system, Arial, sans-serif; font-weight: 700; color: #b3261e; }
+  .trap.fresh { background: #fff4e5; border-color: #e0b070; }
+  .trap.fresh .vs { color: #a35a00; }
+  table { border-collapse: collapse; width: 100%; font-family: -apple-system, Arial, sans-serif;
+          font-size: 11.5px; margin: 10px 0; }
+  th, td { border: 1px solid #ccd4dc; padding: 4px 8px; text-align: left; vertical-align: top; }
+  th { background: #eef1f4; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; }
   ol.quiz { font-family: -apple-system, Arial, sans-serif; font-size: 12px; }
   ol.quiz li { margin: 5px 0; }
   .answers { color: #444; font-size: 11.5px; }
@@ -36,114 +56,257 @@
 </head>
 <body>
 
-<h1>Recognizing the 15 Patterns</h1>
-<p class="lead">HPR interview study guide. The goal isn't to <em>solve</em> — it's to look at a problem and instantly say "that's a ___." Read this like flashcards.</p>
+<h1>Recognizing the 18 Patterns</h1>
+<p class="lead">Interview study guide. The goal isn't to <em>solve</em> — it's to look at a problem and instantly say "that's a ___." Read this like flashcards.</p>
 
 <div class="reflex">
-<strong>The whole skill in one shift:</strong> stop asking <em>"how would I solve this?"</em> (that's inventing brute force). Ask <em>"which of my 15 shapes is this?"</em> (that's recognizing). The reflex:
+<strong>The whole skill in one shift:</strong> stop asking <em>"how would I solve this?"</em> (that's inventing brute force). Ask <em>"which of my 18 shapes is this?"</em> (that's recognizing). The reflex:
 <br>① <strong>bound on n</strong> &rarr; allowed complexity (kills brute force) &nbsp;② <strong>cue words</strong> &rarr; 2–3 candidates &nbsp;③ <strong>a constraint</strong> kills the impossible ones (e.g. negatives kill sliding window).
 </div>
 
-<h2>The 15 patterns — cue · what it does · the tell</h2>
+<div class="leak">
+<span class="hd">The leak this revision fixes — drill, Aug 19</span>
+<br>Scored <strong>✅1 / ⚠️3 / ❌2</strong> over six reps. In <strong>three</strong> of them the <em>mechanism described was correct</em> and the <em>name attached to it was wrong</em> — a heap called "sliding window," a binary-search-on-answer called "monotonic stack." The reasoning is intact; the <strong>vocabulary layer</strong> is what fails under a clock.
+<br><br><strong>Two documentation bugs caused the rest:</strong> 13 of the old 15 patterns stated <em>no complexity at all</em> (so complexity got guessed — two-pointer called O(log n)), and <strong>space</strong> was never volunteered once in six reps. Every pattern below now carries time <em>and</em> space.
+<br><br><strong>Drill it as:</strong> say the pattern <em>name</em>, its <em>number</em>, then time <em>and</em> space — out loud, in that order, every rep. The name is the part that isn't firing.
+</div>
+
+<h2>Constraint → allowed complexity (read this BEFORE the problem)</h2>
+<p class="lead">The bound on n is the answer key to the complexity. Work backwards from it. Budget ~1e8 simple ops/sec.</p>
+
+<table>
+<tr><th>Bound on n</th><th>Allowed time</th><th>Likely approach</th></tr>
+<tr><td>n ≤ 10–12</td><td>O(n!) / O(2ⁿ·n)</td><td>brute force, permutations, backtracking</td></tr>
+<tr><td>n ≤ 20–25</td><td>O(2ⁿ)</td><td>subset enumeration, bitmask DP, meet-in-middle</td></tr>
+<tr><td>n ≤ 100–500</td><td>O(n³)</td><td>Floyd–Warshall, 3 nested loops, interval DP</td></tr>
+<tr><td>n ≤ 2,000–5,000</td><td>O(n²)</td><td>2 nested loops, basic DP table, edit distance</td></tr>
+<tr><td>n ≤ 1e5–1e6</td><td>O(n log n) / O(n)</td><td>sort, two-pointer, sliding window, hashing, heap</td></tr>
+<tr><td>n ≤ 1e7–1e8</td><td>O(n)</td><td>single pass, prefix sums, counting</td></tr>
+<tr><td>n ≤ 1e9–1e18</td><td>O(log n) / O(1)</td><td>binary search, math/closed form, fast exponent</td></tr>
+</table>
+
+<div class="reflex">
+<strong>Watch which quantity the log runs over.</strong> If <code>n ≤ 1e4</code> but a <em>value</em> range is 1e9, the log is over the <strong>answer range R</strong>, not n — that's <strong>O(n log R)</strong>, not O(log n). Saying it that way proves you know which is which.
+</div>
+
+<h2 class="pgbreak">The 18 patterns — cue · what it does · the tell · cost</h2>
 
 <div class="pat"><span class="num">1. Two-pointer.</span>
 <span class="label">Cue:</span> sorted (or sortable) array, "find a pair/triple", "is there an x+y = t".
 <br><span class="label">Does:</span> one index from each end, walk them toward each other.
-<br><span class="label">Tell:</span> sorted + looking for a relationship between two elements. <em>Ex: Two Sum on a sorted array → lo/hi pointers, sum too small move lo up.</em></div>
+<br><span class="label">Tell:</span> sorted + looking for a relationship between two elements. <em>Ex: Two Sum on a sorted array → lo/hi pointers, sum too small move lo up.</em>
+<br><span class="label">Why O(n):</span> each step moves one pointer inward and neither ever backs up, so total movement is bounded by n. <strong>It is a linear walk, not a halving</strong> — this is <em>not</em> O(log n).
+<br><span class="cost">O(n) time / O(1) space &nbsp;←&nbsp; the O(1) is the selling point over a hash set</span></div>
 
 <div class="pat"><span class="num">2. Sliding window.</span>
 <span class="label">Cue:</span> "longest/shortest <strong>contiguous</strong> subarray/substring with a property", values <strong>non-negative</strong>.
 <br><span class="label">Does:</span> grow a window from the right, shrink from the left, keep a running quantity.
-<br><span class="label">Tell:</span> contiguous + the running quantity changes <em>monotonically with window size</em> (adding never decreases it, removing never increases it). <em>Ex: longest substring with all-distinct chars; shortest subarray with sum ≥ S (positive ints).</em></div>
+<br><span class="label">Tell:</span> contiguous + the running quantity changes <em>monotonically with window size</em> (adding never decreases it, removing never increases it). <em>Ex: longest substring with all-distinct chars; shortest subarray with sum ≥ S (positive ints).</em>
+<br><span class="label">Why O(n):</span> each index enters the window once and leaves once.
+<br><span class="cost">O(n) time / O(k) space — O(1) for a bounded alphabet</span></div>
 
 <div class="pat"><span class="num">3. Prefix-sum array (range queries).</span>
 <span class="label">Cue:</span> many range-sum queries on a <strong>fixed</strong> array, "sum of range <code>[i, j]</code>", 2D rectangle sums, "immutable". The endpoints are <strong>known</strong>.
-<br><span class="label">Does:</span> precompute running totals once (O(n)); any range sum = <code>S[j] − S[i]</code> in O(1).
-<br><span class="label">Tell:</span> repeated range sums, 2D grid rectangle sums, or many range-add updates (difference array — the inverse trick). <em>You already know the endpoints; you're not searching for them.</em></div>
+<br><span class="label">Does:</span> precompute running totals once; any range sum = <code>S[j] − S[i]</code> in O(1).
+<br><span class="label">Tell:</span> repeated range sums, 2D grid rectangle sums, or many range-add updates (difference array — the inverse trick). <em>You already know the endpoints; you're not searching for them.</em>
+<br><span class="cost">O(n) build, O(1) per query / O(n) space</span></div>
 
 <div class="pat"><span class="num">4. Prefix sum + hashmap.</span>
 <span class="label">Cue:</span> "contiguous subarray summing to <strong>exactly k</strong>", especially when values can be <strong>negative</strong>.
 <br><span class="label">Does:</span> running prefix sum <code>S</code>; count earlier prefixes equal to <code>S − k</code> via a hashmap.
-<br><span class="label">Tell:</span> "sum = k" + endpoints <em>unknown</em> (and negatives <em>break</em> the window, so you fall back to this). <em>Seed the map with {0:1}.</em></div>
+<br><span class="label">Tell:</span> "sum = k" + endpoints <em>unknown</em> (and negatives <em>break</em> the window, so you fall back to this). <em>Seed the map with {0:1}</em> so a prefix that <em>is</em> k counts itself.
+<br><span class="label">The map is the pattern.</span> A prefix-sum <em>vector</em> alone still needs to compare every pair — that's O(n²). The hashmap is what buys the O(n).
+<br><span class="cost">O(n) time / O(n) space</span></div>
 
 <div class="pat"><span class="num">5. Hashmap / frequency array.</span>
 <span class="label">Cue:</span> "count occurrences", "seen before", "distinct", "anagram", "duplicate".
 <br><span class="label">Does:</span> map value → count (or last-seen index). O(1) lookup.
-<br><span class="label">Tell:</span> you need to remember what you've seen. <em>Bounded values (e.g. lowercase letters) → use a plain <code>int[26]</code>, not a hashmap.</em></div>
+<br><span class="label">Tell:</span> you need to remember what you've seen. <em>Bounded values (e.g. lowercase letters) → use a plain <code>int freq[26]</code>, not a hashmap: no hashing, no allocation, O(1) space.</em>
+<br><span class="label">Never say "sorted hashmap."</span> A hashmap has no order and needs none — you only ask it <em>count of this key</em> and <em>how many keys are live</em>.
+<br><span class="cost">O(n) time / O(n) space — O(1) when the value range is bounded</span></div>
 
 <div class="pat"><span class="num">6. Sorting + sweep.</span>
 <span class="label">Cue:</span> "intervals/meetings overlap or merge", "schedule", anything about order on a number line.
 <br><span class="label">Does:</span> sort by start, then walk once keeping a "current" interval.
-<br><span class="label">Tell:</span> the word "interval" almost always = sort first. <em>Ex: merge overlapping intervals.</em></div>
+<br><span class="label">Tell:</span> the word "interval" almost always = sort first. <em>Ex: merge overlapping intervals.</em>
+<br><span class="cost">O(n log n) time (the sort dominates) / O(1) space beyond the sort</span></div>
 
 <div class="pat"><span class="num">7. Binary search (on a sorted array).</span>
 <span class="label">Cue:</span> already sorted + "find / insert position of a value".
 <br><span class="label">Does:</span> halve the search range each step.
-<br><span class="label">Tell:</span> sorted data + you're locating a specific value. O(log n). <em>Use <code>mid = lo + (hi-lo)/2</code>.</em></div>
+<br><span class="label">Tell:</span> sorted data + you're locating a specific value. <em>Use <code>mid = lo + (hi-lo)/2</code> — <code>(lo+hi)/2</code> overflows.</em>
+<br><span class="cost">O(log n) time / O(1) space</span></div>
 
 <div class="pat"><span class="num">8. Binary search on the answer.</span>
 <span class="label">Cue:</span> "min/max value such that a property holds", "is it possible within budget K?", and the property is <strong>monotonic</strong> (once true, stays true).
 <br><span class="label">Does:</span> binary-search the <em>answer space</em>, test feasibility at each midpoint.
-<br><span class="label">Tell:</span> huge answer range + a yes/no feasibility check. <em>Ex: minimum capacity to ship in D days.</em></div>
+<br><span class="label">Tell:</span> huge answer range + a cheap yes/no feasibility check. <em>Ex: minimum ship capacity to deliver in D days; slowest machine speed that still makes the deadline.</em>
+<br><span class="label">Insight to say out loud:</span> the yes/no test flips NO→YES exactly once across the range — bisect for the flip point.
+<br><span class="cost">O(n log R) time / O(1) space &nbsp;—&nbsp; R = answer range, NOT n</span></div>
 
 <div class="pat"><span class="num">9. Heap (priority queue).</span>
 <span class="label">Cue:</span> "k-th largest/smallest", "top k", "running median", "merge k lists".
-<br><span class="label">Does:</span> keep only the k elements that matter, O(log k) per op.
-<br><span class="label">Tell:</span> you want the best few, not a full sort. <em>Sorting also works (O(n log n)) but heap (O(n log k)) / quickselect (O(n)) is the faster gear — say so.</em></div>
+<br><span class="label">Does:</span> keep only the k elements that matter.
+<br><span class="label">Tell:</span> you want the best few, not a full sort. <em>Sorting also works and is a fine first answer — say it, then offer the faster gear.</em>
+<br><span class="label">For k <em>largest</em> use a MIN-heap</span> (and vice versa): its top is the smallest of the k biggest — i.e. the running k-th largest, and exactly the element to evict.
+<br><span class="cost">heap O(n log k) / O(k) &nbsp;·&nbsp; sort O(n log n) / O(1) &nbsp;·&nbsp; quickselect O(n) avg, O(n²) worst / O(1)</span></div>
 
 <div class="pat"><span class="num">10. Monotonic stack.</span>
 <span class="label">Cue:</span> "next greater/smaller element", "span", "largest rectangle in histogram".
 <br><span class="label">Does:</span> a stack kept in increasing/decreasing order; pop while the new element breaks the order.
-<br><span class="label">Tell:</span> "next/previous greater or smaller" is the dead giveaway.</div>
+<br><span class="label">Tell:</span> "next/previous greater or smaller" is the dead giveaway. <strong>It compares elements to each other</strong> — if you're testing candidate <em>answers</em> instead, you want #8.
+<br><span class="label">Why O(n):</span> each index is pushed and popped at most once.
+<br><span class="cost">O(n) time / O(n) space</span></div>
 
 <div class="pat"><span class="num">11. Stack.</span>
 <span class="label">Cue:</span> "balanced", "valid parentheses", nesting, undo, "evaluate expression".
 <br><span class="label">Does:</span> push openers, pop/match on closers; must be empty at the end.
-<br><span class="label">Tell:</span> matching/nesting that must close in reverse order. <em>In C: <code>char st[n]; int top=0;</code></em></div>
+<br><span class="label">Tell:</span> matching/nesting that must close in reverse order. <em>C++: <code>std::stack&lt;char&gt; st;</code></em>
+<br><span class="cost">O(n) time / O(n) space</span></div>
 
 <div class="pat"><span class="num">12. BFS (breadth-first search).</span>
 <span class="label">Cue:</span> "minimum steps/moves to reach", unweighted shortest path, "levels", grid distances.
 <br><span class="label">Does:</span> explore level by level with a queue; first arrival = fewest steps.
-<br><span class="label">Tell:</span> graph/grid + <em>shortest</em>. <em>Queue.</em></div>
+<br><span class="label">Tell:</span> graph/grid + <em>shortest</em>. <em>Queue.</em>
+<br><span class="cost">O(V+E) time / O(V) space</span></div>
 
 <div class="pat"><span class="num">13. DFS / union-find.</span>
 <span class="label">Cue:</span> "connected components", "flood fill", "number of islands", "all paths", cycle detection.
 <br><span class="label">Does:</span> go deep then backtrack (recursion/stack); union-find for grouping.
-<br><span class="label">Tell:</span> graph/grid + <em>reach/group everything</em> (not shortest).</div>
+<br><span class="label">Tell:</span> graph/grid + <em>reach/group everything</em> (not shortest).
+<br><span class="cost">DFS O(V+E) / O(V) &nbsp;·&nbsp; union-find ~O(α(n)) per op, effectively O(1)</span></div>
 
 <div class="pat"><span class="num">14. Dynamic programming.</span>
 <span class="label">Cue:</span> "number of ways", "min/max cost/length", "can you make X", overlapping subproblems, small-ish n with combinatorial feel.
 <br><span class="label">Does:</span> define a state + a transition; fill a table.
-<br><span class="label">Tell:</span> the answer depends on answers to smaller versions of the same problem. <em>Ex: coin change, edit distance, longest increasing subsequence.</em></div>
+<br><span class="label">Tell:</span> the answer depends on answers to smaller versions of the same problem. <em>Ex: coin change, edit distance, longest increasing subsequence.</em>
+<br><span class="cost">O(states × transition cost) time / O(states) space — often trimmed to O(one row) with a rolling array</span></div>
 
 <div class="pat"><span class="num">15. Math / bit trick.</span>
 <span class="label">Cue:</span> huge n with arithmetic, divisibility/parity, "without extra space", "single number".
 <br><span class="label">Does:</span> closed-form formula, GCD, XOR tricks, sieve.
-<br><span class="label">Tell:</span> n is astronomically large (1e9–1e18) so only O(log n)/O(1) survives → must be math.</div>
+<br><span class="label">Tell:</span> n is astronomically large (1e9–1e18) so only O(log n)/O(1) survives → must be math.
+<br><span class="cost">O(log n) or O(1) time / O(1) space</span></div>
 
-<h2 class="pgbreak">The trap pairs (where you got bitten today)</h2>
-<p class="lead">Two problems that <em>look</em> the same; a single constraint decides. This is the real test.</p>
+<div class="pat new"><span class="num">16. Tree recursion. &nbsp;[NEW]</span>
+<span class="label">Cue:</span> the word "tree" at all — "depth", "height", "diameter", "lowest common ancestor", "is it balanced", "path sum".
+<br><span class="label">Does:</span> recurse to children, combine their answers on the way back up (post-order). <strong>In-order on a BST yields sorted order</strong> — that one fact solves a whole family of BST problems.
+<br><span class="label">Tell:</span> a node's answer is built from its children's answers. Don't try to root it at a special node — let every node ask its children.
+<br><span class="label">h = tree height</span> — O(log n) balanced, O(n) degenerate. That's the recursion stack.
+<br><span class="cost">O(n) time / O(h) space</span></div>
 
-<div class="trap"><span class="vs">#3 Prefix-sum array &nbsp;vs&nbsp; #4 Prefix-sum+hashmap</span>
-<br>Both use running totals. The decider: <strong>do you know the endpoints?</strong> Endpoints <em>known</em> ("sum of range [i,j]", repeated queries, 2D) → plain array, O(1) per lookup. Endpoints <em>unknown</em> ("which subarrays sum to k?") → hashmap to find them in O(n) instead of O(n²). Same O(n) storage; opposite direction (range→sum vs sum→range).</div>
+<div class="pat new"><span class="num">17. Backtracking. &nbsp;[NEW]</span>
+<span class="label">Cue:</span> "all subsets", "all permutations", "all combinations", "every valid arrangement", N-queens, sudoku.
+<br><span class="label">Does:</span> choose → recurse → <em>un</em>-choose. Build a partial solution, abandon it the moment it can't work (prune).
+<br><span class="label">Tell:</span> they want <strong>every</strong> solution enumerated, not a count or a best. Small n (≤ 20ish) confirms it.
+<br><span class="label">Say the exponential out loud</span> — "this is O(2ⁿ) and that's inherent, there are 2ⁿ subsets to emit." Naming it is the signal; apologizing for it is not.
+<br><span class="cost">O(2ⁿ) subsets / O(n!) permutations time · O(n) recursion depth (+ output size)</span></div>
+
+<div class="pat new"><span class="num">18. Fast / slow pointers. &nbsp;[NEW]</span>
+<span class="label">Cue:</span> linked list + "does it have a cycle", "find the middle", "find the start of the loop", "n-th from the end".
+<br><span class="label">Does:</span> one pointer moves 1 step, the other 2. They meet iff there's a cycle; when fast hits the end, slow is at the middle.
+<br><span class="label">Tell:</span> linked list + a positional question, and you're told <strong>O(1) space</strong> (which rules out the hash-set answer).
+<br><span class="cost">O(n) time / O(1) space &nbsp;←&nbsp; the O(1) is the entire point</span></div>
+
+<h2 class="pgbreak">The trap pairs</h2>
+<p class="lead">Two problems that <em>look</em> the same; a single constraint decides. This is the real test. Orange = missed on Aug 19.</p>
+
+<div class="trap fresh"><span class="vs">#3 Prefix-sum array &nbsp;vs&nbsp; #4 Prefix-sum+hashmap &nbsp;— missed twice now</span>
+<br>Both use running totals. The decider: <strong>do you know the endpoints?</strong> Endpoints <em>known</em> ("sum of range [i,j]", repeated queries, 2D) → plain array, O(1) per lookup. Endpoints <em>unknown</em> ("which subarrays sum to k?") → hashmap to find them in O(n) instead of O(n²). Same O(n) storage; opposite direction (range→sum vs sum→range). <strong>If you answer "prefix sum," immediately ask yourself "array or hashmap?" — the bare word is only half an answer.</strong></div>
 
 <div class="trap"><span class="vs">#2 Sliding window &nbsp;vs&nbsp; #4 Prefix-sum+hashmap</span>
 <br>Both scream "contiguous subarray." The decider: <strong>are negatives allowed?</strong> Non-negative → window (running quantity changes monotonically with window size). Negatives present → window is <em>dead</em> (adding can lower the sum, breaking that monotonicity) → prefix-sum + hashmap.</div>
+
+<div class="trap fresh"><span class="vs">The shuffle test — #2 sliding window &nbsp;vs&nbsp; everything else</span>
+<br>Before saying "sliding window," ask: <strong>if I shuffled the input, would the answer change?</strong> If <em>yes</em>, order matters and a window is plausible. If <em>no</em>, the problem isn't about contiguity at all and a window cannot be the answer — you probably want a heap (#9), a hashmap (#5), or a sort. <em>"K-th largest" survives any shuffle → not a window.</em></div>
+
+<div class="trap fresh"><span class="vs">#8 Binary search on answer &nbsp;vs&nbsp; #10 Monotonic stack</span>
+<br>Both involve "bigger/smaller" language. The decider: <strong>what are you comparing?</strong> Comparing array elements <em>to each other</em> ("next greater element") → monotonic stack. Testing candidate <em>answers</em> against a budget or deadline ("is speed v fast enough?") → binary search on the answer. In #8 the array elements are never compared to each other at all.</div>
 
 <div class="trap"><span class="vs">#1 Two-pointer &nbsp;vs&nbsp; #12/13 BFS/DFS</span>
 <br>"Find a pair" on a flat <strong>array</strong> = two-pointer. BFS/DFS only when there's a <strong>graph or grid</strong> (nodes, edges, neighbors). No graph → no BFS.</div>
 
 <div class="trap"><span class="vs">#7 Binary search &nbsp;vs&nbsp; #8 Binary search on answer</span>
-<br>Searching for a value <em>in sorted data</em> = #7. Searching for the smallest/largest <em>parameter that makes something feasible</em> = #8 (the array may be unsorted; you bisect the answer range, not the array).</div>
+<br>Searching for a value <em>in sorted data</em> = #7, O(log n). Searching for the smallest/largest <em>parameter that makes something feasible</em> = #8, O(n log R) (the array may be unsorted; you bisect the answer range, not the array).</div>
 
-<div class="trap"><span class="vs">#9 Heap &nbsp;vs&nbsp; full sort</span>
-<br>"k-th largest" — sorting works and is a fine first answer (O(n log n)). But you only need the top k, so heap (O(n log k)) or quickselect (O(n)) is faster. When they ask "can you do better?", that's the answer.</div>
+<div class="trap fresh"><span class="vs">#9 Heap &nbsp;vs&nbsp; full sort &nbsp;vs&nbsp; "keep a sorted vector"</span>
+<br>"k-th largest" — sorting works and is a fine first answer (O(n log n)). You only need the top k, so a heap (O(n log k)) or quickselect (O(n)) is the faster gear. <strong>But maintaining a sorted <code>vector</code> by inserting as you go is O(n) per insert — O(n²) total, worse than just sorting.</strong> The right instinct ("keep a running collection of the best ones") needs the right container.</div>
 
 <div class="trap"><span class="vs">#6 Sort+sweep &nbsp;vs&nbsp; #5 Hashmap</span>
 <br>Intervals/overlap = order on a number line → <strong>sort</strong>. A hashmap has no order, so it can't help with overlap. If your complexity instinct says "n log n", that's the sort talking — follow it.</div>
 
-<h2>Recognition self-quiz (do it in the dark)</h2>
-<p class="lead">Read the cue, name the pattern + number before peeking. Answers at the bottom.</p>
+<div class="trap"><span class="vs">#12 BFS &nbsp;vs&nbsp; #13 DFS &nbsp;— on a tree specifically</span>
+<br>Both traverse everything. The decider: <strong>do you need distance or levels?</strong> "Minimum depth", "level order", "right side view", "nodes at distance k" → BFS with a queue. "Height", "diameter", "path sum", "is it balanced", anything combining children's answers → DFS/#16 recursion. <em>Height via DFS is natural; minimum depth via DFS is a trap — BFS stops at the first leaf.</em></div>
+
+<div class="trap"><span class="vs">#17 Backtracking &nbsp;vs&nbsp; #14 DP</span>
+<br>Same recursive smell. The decider: <strong>do they want every solution, or just the count/best one?</strong> "List all subsets that sum to k" → backtracking, exponential and unavoidable. "How many subsets sum to k" / "the largest such subset" → DP, polynomial. Emitting solutions forces exponential; counting them does not.</div>
+
+<div class="trap"><span class="vs">Recursion depth &nbsp;— any of #13, #14, #16, #17</span>
+<br>If n could be 1e5, a recursive DFS <strong>blows the stack</strong>. Say so unprompted and offer the explicit-stack iterative version. Free signal, and it's a real production instinct — the interviewer notices.</div>
+
+<h2 class="pgbreak">C++ execution notes</h2>
+<p class="lead">Recognition gets you the approach; these are what actually bite while typing it.</p>
+
+<div class="trap"><span class="vs">The five that cost points</span>
+<br>• <code>m[key]</code> on a map <strong>inserts</strong> a default value — silently corrupts "have I seen it?" logic. Read with <code>.contains()</code>, <code>.find()</code>, or <code>.at()</code>.
+<br>• <code>priority_queue</code> is a <strong>max-heap by default</strong> — the opposite of what top-k-largest needs.
+<br>• <code>v.size()</code> is <strong>unsigned</strong>: <code>v.size() - 1</code> on an empty vector is a huge number.
+<br>• <code>(lo + hi) / 2</code> overflows; <code>lo + (hi - lo) / 2</code> doesn't. Sums of many large ints → <code>long long</code>.
+<br>• Pass big containers by <code>const&amp;</code>. Say it out loud; it's free signal.</div>
+
+<pre>// min-heap (for k LARGEST) — the default is a max-heap
+priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;
+
+// #8 binary search on the answer
+int lo = 1, hi = *max_element(a.begin(), a.end());
+while (lo &lt; hi) {
+    int mid = lo + (hi - lo) / 2;       // never (lo+hi)/2
+    if (feasible(mid)) hi = mid;        // works → try smaller
+    else               lo = mid + 1;
+}
+return lo;                              // lo == hi == answer
+
+// #2 sliding window (variable size)
+int left = 0, best = 0;
+for (int right = 0; right &lt; n; ++right) {
+    add(a[right]);
+    while (!ok()) remove(a[left++]);
+    best = max(best, right - left + 1);
+}
+
+// #10 monotonic stack — indices, not values
+stack&lt;int&gt; st;
+for (int i = 0; i &lt; n; ++i) {
+    while (!st.empty() &amp;&amp; a[i] &gt; a[st.top()]) { ans[st.top()] = i - st.top(); st.pop(); }
+    st.push(i);
+}
+
+// #16 tree recursion — height and diameter in one pass
+int best = 0;
+int height(TreeNode* t) {
+    if (!t) return 0;
+    int l = height(t-&gt;left), r = height(t-&gt;right);
+    best = max(best, l + r);            // diameter through this node
+    return 1 + max(l, r);
+}
+
+// #17 backtracking — choose / recurse / un-choose
+void go(int i, vector&lt;int&gt;&amp; cur) {
+    if (i == n) { out.push_back(cur); return; }
+    go(i + 1, cur);                     // skip
+    cur.push_back(a[i]); go(i + 1, cur); cur.pop_back();   // take, then UN-take
+}
+
+// #18 fast/slow — cycle detection, O(1) space
+ListNode *slow = head, *fast = head;
+while (fast &amp;&amp; fast-&gt;next) {
+    slow = slow-&gt;next; fast = fast-&gt;next-&gt;next;
+    if (slow == fast) return true;
+}
+return false;</pre>
+
+<h2 class="pgbreak">Recognition self-quiz (do it in the dark)</h2>
+<p class="lead">Read the cue, name the pattern + number <strong>+ time and space</strong> before peeking. Answers at the bottom.</p>
 <ol class="quiz">
 <li>"Longest substring with at most 2 distinct characters." (n ≤ 1e5)</li>
 <li>"Count subarrays summing to k; array has negatives." (n ≤ 1e5)</li>
@@ -161,27 +324,39 @@
 <li>"For each element, the next element greater than it."</li>
 <li>"Shortest contiguous subarray with sum ≥ S; all positive." (n ≤ 1e5)</li>
 <li>"Answer Q queries, each the sum of a fixed array over range [i, j]." (immutable)</li>
+<li>"Diameter of a binary tree — longest path between any two nodes."</li>
+<li>"Print every subset of a set of 15 distinct integers."</li>
+<li>"Detect whether a linked list has a cycle, using O(1) extra space."</li>
+<li>"Minimum depth of a binary tree." <em>(careful — not the same tool as #17 above)</em></li>
+<li>"How many subsets sum to exactly k?" (n ≤ 200, k ≤ 1000) <em>(careful — not the same tool as #18 above)</em></li>
+<li>"Slowest machine speed that still finishes all jobs by the deadline." (n ≤ 1e4, values ≤ 1e9)</li>
 </ol>
 <p class="answers"><strong>Answers:</strong>
-1) #2 sliding window ·
-2) #4 prefix-sum+hashmap (negatives!) ·
-3) #12 BFS ·
-4) #10 monotonic stack ·
-5) #9 heap/quickselect (sort = OK first answer) ·
-6) #1 two-pointer ·
-7) #13 DFS/union-find ·
-8) #8 binary search on the answer ·
-9) #11 stack ·
-10) #5 hashmap (values huge → not an array) ·
-11) #6 sort + sweep ·
-12) #14 DP ·
-13) #15 bit trick (XOR all) ·
-14) #10 monotonic stack ·
-15) #2 sliding window (positive → monotonic) ·
-16) #3 prefix-sum array (known endpoints, repeated queries).</p>
+1) #2 sliding window · O(n)/O(1) ·
+2) #4 prefix-sum+hashmap (negatives!) · O(n)/O(n) ·
+3) #12 BFS · O(V+E)/O(V) ·
+4) #10 monotonic stack · O(n)/O(n) ·
+5) #9 heap/quickselect (sort = OK first answer) · O(n log k)/O(k) ·
+6) #1 two-pointer · O(n)/O(1) ·
+7) #13 DFS/union-find · O(V+E)/O(V) ·
+8) #8 binary search on the answer · O(n log R)/O(1) ·
+9) #11 stack · O(n)/O(n) ·
+10) #5 hashmap (values huge → not an array) · O(n)/O(n) ·
+11) #6 sort + sweep · O(n log n)/O(1) ·
+12) #14 DP · O(n·amount)/O(amount) ·
+13) #15 bit trick (XOR all) · O(n)/O(1) ·
+14) #10 monotonic stack · O(n)/O(n) ·
+15) #2 sliding window (positive → monotonic) · O(n)/O(1) ·
+16) #3 prefix-sum array (known endpoints, repeated queries) · O(n) build, O(1)/query ·
+17) #16 tree recursion, post-order · O(n)/O(h) ·
+18) #17 backtracking · O(2ⁿ)/O(n) depth ·
+19) #18 fast/slow pointers · O(n)/O(1) ·
+20) #12 <strong>BFS</strong>, not DFS — first leaf reached wins · O(V+E)/O(V) ·
+21) #14 <strong>DP</strong>, not backtracking — they want a count, not the subsets · O(n·k)/O(k) ·
+22) #8 binary search on the answer · O(n log R)/O(1).</p>
 
 <hr>
-<p class="answers" style="text-align:center;">If a cue doesn't instantly fire the pattern, that's the one to drill tomorrow. Recognition over recall — let it wash over you. Sleep when it's boring.</p>
+<p class="answers" style="text-align:center;">If a cue doesn't instantly fire <strong>the name, the number, and both complexities</strong>, that's the one to drill. Recognition over recall — let it wash over you. Sleep when it's boring.</p>
 
 </body>
 </html>
